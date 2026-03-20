@@ -18,7 +18,13 @@ public class JwtTokenProvider {
     private long jwtExpiration;
     
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        // Ensure key is at least 256 bits (32 bytes)
+        String keyString = jwtSecret;
+        while (keyString.getBytes(StandardCharsets.UTF_8).length < 32) {
+            keyString += keyString;
+        }
+        byte[] keyBytes = keyString.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
     
     public String generateToken(String username, String role, Long userId) {
