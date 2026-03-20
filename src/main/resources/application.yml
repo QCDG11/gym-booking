@@ -24,7 +24,7 @@ server:
 
 # JWT Secret Key
 jwt:
-  secret: gym-booking-secret-key-2024
+  secret: gym-booking-secret-key-2024-this-is-a-very-long-secret-key-for-jwt-token-generation
   expiration: 86400000
 
 # Gym Settings
