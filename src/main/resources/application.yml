@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: gym-booking
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/gym_booking?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  port: 8080
+
+# JWT Secret Key
+jwt:
+  secret: gym-booking-secret-key-2024
+  expiration: 86400000
+
+# Gym Settings
+gym:
+  business:
+    openTime: "06:00"
+    closeTime: "22:00"
