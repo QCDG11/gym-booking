@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface CoachRepository extends JpaRepository<Coach, Long> {
     List<Coach> findByEnabledTrue();
-    Optional<Coach> findByUserId(Long userId);
 }
