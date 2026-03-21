@@ -23,7 +23,7 @@ public class BookingService {
         CourseSchedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("课表不存在"));
         
-        if (schedule.getCurrentParticipants() >= schedule.getCourse().getMaxParticipants()) {
+        if (schedule.getCurrentParticipants() >= 20) {
             throw new RuntimeException("课程已满");
         }
         

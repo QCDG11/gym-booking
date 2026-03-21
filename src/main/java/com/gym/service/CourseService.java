@@ -69,15 +69,9 @@ public class CourseService {
     // 排课
     @Transactional
     public CourseSchedule createSchedule(CourseScheduleDTO dto) {
-        Course course = findCourseById(dto.getCourseId());
-        if (course == null) throw new RuntimeException("课程不存在");
-        
-        Coach coach = coachRepository.findById(dto.getCoachId()).orElse(null);
-        if (coach == null) throw new RuntimeException("教练不存在");
-        
         CourseSchedule schedule = CourseSchedule.builder()
-                .course(course)
-                .coach(coach)
+                .courseId(dto.getCourseId())
+                .coachId(dto.getCoachId())
                 .location(dto.getLocation())
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())
