@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,8 +81,21 @@ public class MemberController {
     
     // ===== 私教浏览与预约 =====
     @GetMapping("/coaches")
-    public ResponseEntity<List<Coach>> getCoaches() {
-        return ResponseEntity.ok(coachService.findAll());
+    public ResponseEntity<?> getCoaches() {
+        List<Coach> coaches = coachService.findAll();
+        List<Map<String, Object>> result = coaches.stream().map(c -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", c.getId());
+            map.put("name", c.getName());
+            map.put("avatar", c.getAvatar());
+            map.put("phone", c.getPhone());
+            map.put("specialty", c.getSpecialty());
+            map.put("introduction", c.getIntroduction());
+            map.put("yearsOfExperience", c.getYearsOfExperience());
+            map.put("enabled", c.getEnabled());
+            return map;
+        }).toList();
+        return ResponseEntity.ok(result);
     }
     
     @PostMapping("/book/private")
