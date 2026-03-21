@@ -17,6 +17,6 @@ public interface CourseScheduleRepository extends JpaRepository<CourseSchedule, 
     @Query("SELECT cs FROM CourseSchedule cs WHERE cs.startTime >= :start AND cs.endTime <= :end")
     List<CourseSchedule> findByTimeRange(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
     
-    @Query("SELECT cs FROM CourseSchedule cs WHERE cs.coach.id = :coachId AND cs.startTime >= :start AND cs.endTime <= :end")
+    @Query("SELECT cs FROM CourseSchedule cs WHERE cs.coachId = :coachId AND cs.startTime >= :start AND cs.endTime <= :end")
     List<CourseSchedule> findByCoachIdAndTimeRange(@Param("coachId") Long coachId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
