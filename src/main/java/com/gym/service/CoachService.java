@@ -28,25 +28,14 @@ public class CoachService {
     }
     
     public Coach findByUserId(Long userId) {
-        return coachRepository.findByUserId(userId).orElse(null);
+        // 暂时返回 null，因为不再关联 User
+        return null;
     }
     
     @Transactional
     public Coach createCoach(CoachDTO dto, String username, String password) {
-        // 创建教练账号
-        User user = User.builder()
-                .username(username)
-                .password(passwordEncoder.encode(password))
-                .role("COACH")
-                .nickname(dto.getName())
-                .phone(dto.getPhone())
-                .enabled(true)
-                .build();
-        user = userRepository.save(user);
-        
         // 创建教练信息
         Coach coach = Coach.builder()
-                .user(user)
                 .name(dto.getName())
                 .avatar(dto.getAvatar())
                 .phone(dto.getPhone())
