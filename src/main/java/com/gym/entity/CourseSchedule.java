@@ -15,16 +15,11 @@ public class CourseSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coach_id", nullable = false)
-    private Coach coach;
+    private Long courseId;
+    private Long coachId;
     
     @Column(nullable = false)
-    private String location; // 场地
+    private String location;
     
     @Column(nullable = false)
     private LocalDateTime startTime;
