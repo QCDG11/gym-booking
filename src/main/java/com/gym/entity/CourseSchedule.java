@@ -16,7 +16,9 @@ public class CourseSchedule {
     private Long id;
     
     private Long courseId;
+    private String courseName;
     private Long coachId;
+    private String coachName;
     
     @Column(nullable = false)
     private String location;

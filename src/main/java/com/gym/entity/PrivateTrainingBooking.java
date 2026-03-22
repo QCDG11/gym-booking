@@ -15,19 +15,17 @@ public class PrivateTrainingBooking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "private_training_id", nullable = false)
-    private PrivateTraining privateTraining;
+    private Long privateTrainingId;
     
     @Column(nullable = false)
-    private LocalDateTime bookedTime; // 预约时间
+    private LocalDateTime bookedTime;
     
-    private String location; // 地点
-    private String note; // 备注
+    private String location;
+    private String note;
     
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED
+    private BookingStatus status;
     
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

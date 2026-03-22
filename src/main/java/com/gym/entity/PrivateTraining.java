@@ -16,27 +16,22 @@ public class PrivateTraining {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coach_id", nullable = false)
-    private Coach coach;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Long coachId;
+    private Long userId;
     
     @Column(nullable = false)
-    private String type; // 私教类型
+    private String type;
     
-    private Integer duration; // 时长（分钟）
-    private BigDecimal price; // 价格
-    private Integer totalSessions; // 总次数
-    private Integer remainingSessions; // 剩余次数
+    private Integer duration;
+    private BigDecimal price;
+    private Integer totalSessions;
+    private Integer remainingSessions;
     
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TrainingStatus status; // ACTIVE, COMPLETED, EXPIRED
+    private TrainingStatus status;
     
-    private LocalDateTime expireDate; // 过期日期
+    private LocalDateTime expireDate;
     
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

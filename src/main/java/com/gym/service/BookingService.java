@@ -31,12 +31,9 @@ public class BookingService {
             throw new RuntimeException("您已预约过此课程");
         }
         
-        User user = new User();
-        user.setId(userId);
-        
         CourseBooking booking = CourseBooking.builder()
-                .schedule(schedule)
-                .user(user)
+                .scheduleId(scheduleId)
+                .userId(userId)
                 .status(CourseBooking.BookingStatus.CONFIRMED)
                 .build();
         
@@ -63,9 +60,13 @@ public class BookingService {
         courseBookingRepository.save(booking);
         
         // 减少已预约人数
-        CourseSchedule schedule = booking.getSchedule();
-        schedule.setCurrentParticipants(Math.max(0, schedule.getCurrentParticipants() - 1));
-        scheduleRepository.save(schedule);
+        if (booking.getScheduleId() != null) {
+            CourseSchedule schedule = scheduleRepository.findById(booking.getScheduleId()).orElse(null);
+            if (schedule != null) {
+                schedule.setCurrentParticipants(Math.max(0, schedule.getCurrentParticipants() - 1));
+                scheduleRepository.save(schedule);
+            }
+        }
     }
     
     public List<CourseBooking> findUserCourseBookings(Long userId) {

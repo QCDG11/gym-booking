@@ -15,17 +15,12 @@ public class CourseBooking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id", nullable = false)
-    private CourseSchedule schedule;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Long scheduleId;
+    private Long userId;
     
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private BookingStatus status; // CONFIRMED, CANCELLED, COMPLETED
+    private BookingStatus status;
     
     @Column(nullable = false, updatable = false)
     private LocalDateTime bookedAt;
