@@ -77,11 +77,14 @@ public class BookingService {
                     booking.setCourseName(schedule.getCourseName());
                     booking.setCoachName(schedule.getCoachName());
                     booking.setLocation(schedule.getLocation());
-                    booking.setStartTime(schedule.getStartTime().toString());
+                    booking.setStartTime(schedule.getStartTime() != null ? schedule.getStartTime().toString() : null);
                     booking.setMaxParticipants(schedule.getMaxParticipants());
                     booking.setCurrentParticipants(schedule.getCurrentParticipants());
                 });
             }
+            // 清除可能存在的懒加载关联，避免序列化错误
+            booking.setScheduleId(booking.getScheduleId());
+            booking.setUserId(booking.getUserId());
         }
         return bookings;
     }
