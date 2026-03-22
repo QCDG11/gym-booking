@@ -158,7 +158,7 @@ public class DataInitializer {
                 .startTime(now.plusHours(2))
                 .endTime(now.plusHours(3))
                 .location("瑜伽教室A")
-                .maxParticipants(20)
+                .maxParticipants(30)
                 .currentParticipants(0)
                 .enabled(true)
                 .build());
@@ -172,7 +172,7 @@ public class DataInitializer {
                 .startTime(now.plusHours(4))
                 .endTime(now.plusHours(5))
                 .location("动感单车教室")
-                .maxParticipants(20)
+                .maxParticipants(30)
                 .currentParticipants(0)
                 .enabled(true)
                 .build());
