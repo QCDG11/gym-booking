@@ -38,6 +38,10 @@ public class PrivateTraining {
     
     private LocalDateTime updatedAt;
     
+    // 前端需要的教练信息
+    @Transient
+    private String coachName;
+    
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

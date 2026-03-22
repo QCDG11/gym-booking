@@ -106,7 +106,15 @@ public class BookingService {
     }
     
     public List<PrivateTraining> findUserPrivateTrainings(Long userId) {
-        return privateTrainingRepository.findByUserId(userId);
+        List<PrivateTraining> trainings = privateTrainingRepository.findByUserId(userId);
+        for (PrivateTraining training : trainings) {
+            if (training.getCoachId() != null) {
+                coachRepository.findById(training.getCoachId()).ifPresent(coach -> {
+                    training.setCoachName(coach.getName());
+                });
+            }
+        }
+        return trainings;
     }
     
     public List<PrivateTraining> findCoachPrivateTrainings(Long coachId) {
