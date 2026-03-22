@@ -27,6 +27,25 @@ public class CourseBooking {
     
     private LocalDateTime cancelledAt;
     
+    // 前端需要的课表信息
+    @Transient
+    private String courseName;
+    
+    @Transient
+    private String coachName;
+    
+    @Transient
+    private String location;
+    
+    @Transient
+    private String startTime;
+    
+    @Transient
+    private Integer maxParticipants;
+    
+    @Transient
+    private Integer currentParticipants;
+    
     @PrePersist
     protected void onCreate() {
         bookedAt = LocalDateTime.now();

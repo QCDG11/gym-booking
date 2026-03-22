@@ -70,7 +70,20 @@ public class BookingService {
     }
     
     public List<CourseBooking> findUserCourseBookings(Long userId) {
-        return courseBookingRepository.findByUserId(userId);
+        List<CourseBooking> bookings = courseBookingRepository.findByUserId(userId);
+        for (CourseBooking booking : bookings) {
+            if (booking.getScheduleId() != null) {
+                scheduleRepository.findById(booking.getScheduleId()).ifPresent(schedule -> {
+                    booking.setCourseName(schedule.getCourseName());
+                    booking.setCoachName(schedule.getCoachName());
+                    booking.setLocation(schedule.getLocation());
+                    booking.setStartTime(schedule.getStartTime().toString());
+                    booking.setMaxParticipants(schedule.getMaxParticipants());
+                    booking.setCurrentParticipants(schedule.getCurrentParticipants());
+                });
+            }
+        }
+        return bookings;
     }
     
     public List<CourseBooking> findScheduleBookings(Long scheduleId) {
