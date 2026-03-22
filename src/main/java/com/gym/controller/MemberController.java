@@ -75,7 +75,7 @@ public class MemberController {
             return ResponseEntity.status(401).body(Map.of("message", "未登录"));
         }
         
-        List<CourseBooking> bookings = bookingService.findUserCourseBookings(user.getId());
+        List<CourseBookingDTO> bookings = bookingService.findUserCourseBookings(user.getId());
         return ResponseEntity.ok(bookings);
     }
     
@@ -156,7 +156,7 @@ public class MemberController {
             return ResponseEntity.status(401).body(Map.of("message", "未登录"));
         }
         
-        List<PrivateTraining> trainings = bookingService.findUserPrivateTrainings(user.getId());
+        List<PrivateTrainingDTO> trainings = bookingService.findUserPrivateTrainings(user.getId());
         return ResponseEntity.ok(trainings);
     }
     

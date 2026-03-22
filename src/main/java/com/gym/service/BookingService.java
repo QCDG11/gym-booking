@@ -1,5 +1,6 @@
 package com.gym.service;
 
+import com.gym.dto.*;
 import com.gym.entity.*;
 import com.gym.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ public class BookingService {
     private final CourseScheduleRepository scheduleRepository;
     private final PrivateTrainingRepository privateTrainingRepository;
     private final PrivateTrainingBookingRepository privateBookingRepository;
+    private final CoachRepository coachRepository;
     
     // ===== 课程预约 =====
     @Transactional
@@ -23,7 +26,7 @@ public class BookingService {
         CourseSchedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("课表不存在"));
         
-        if (schedule.getCurrentParticipants() >= 20) {
+        if (schedule.getCurrentParticipants() >= 30) {
             throw new RuntimeException("课程已满");
         }
         
@@ -39,7 +42,6 @@ public class BookingService {
         
         booking = courseBookingRepository.save(booking);
         
-        // 更新已预约人数
         schedule.setCurrentParticipants(schedule.getCurrentParticipants() + 1);
         scheduleRepository.save(schedule);
         
@@ -59,7 +61,6 @@ public class BookingService {
         booking.setCancelledAt(LocalDateTime.now());
         courseBookingRepository.save(booking);
         
-        // 减少已预约人数
         if (booking.getScheduleId() != null) {
             CourseSchedule schedule = scheduleRepository.findById(booking.getScheduleId()).orElse(null);
             if (schedule != null) {
@@ -69,24 +70,32 @@ public class BookingService {
         }
     }
     
-    public List<CourseBooking> findUserCourseBookings(Long userId) {
+    public List<CourseBookingDTO> findUserCourseBookings(Long userId) {
         List<CourseBooking> bookings = courseBookingRepository.findByUserId(userId);
-        for (CourseBooking booking : bookings) {
+        
+        return bookings.stream().map(booking -> {
+            CourseBookingDTO dto = CourseBookingDTO.builder()
+                    .id(booking.getId())
+                    .scheduleId(booking.getScheduleId())
+                    .userId(booking.getUserId())
+                    .status(booking.getStatus() != null ? booking.getStatus().name() : null)
+                    .bookedAt(booking.getBookedAt() != null ? booking.getBookedAt().toString() : null)
+                    .cancelledAt(booking.getCancelledAt() != null ? booking.getCancelledAt().toString() : null)
+                    .build();
+            
             if (booking.getScheduleId() != null) {
                 scheduleRepository.findById(booking.getScheduleId()).ifPresent(schedule -> {
-                    booking.setCourseName(schedule.getCourseName());
-                    booking.setCoachName(schedule.getCoachName());
-                    booking.setLocation(schedule.getLocation());
-                    booking.setStartTime(schedule.getStartTime() != null ? schedule.getStartTime().toString() : null);
-                    booking.setMaxParticipants(schedule.getMaxParticipants());
-                    booking.setCurrentParticipants(schedule.getCurrentParticipants());
+                    dto.setCourseName(schedule.getCourseName());
+                    dto.setCoachName(schedule.getCoachName());
+                    dto.setLocation(schedule.getLocation());
+                    dto.setStartTime(schedule.getStartTime() != null ? schedule.getStartTime().toString() : null);
+                    dto.setMaxParticipants(schedule.getMaxParticipants());
+                    dto.setCurrentParticipants(schedule.getCurrentParticipants());
                 });
             }
-            // 清除可能存在的懒加载关联，避免序列化错误
-            booking.setScheduleId(booking.getScheduleId());
-            booking.setUserId(booking.getUserId());
-        }
-        return bookings;
+            
+            return dto;
+        }).collect(Collectors.toList());
     }
     
     public List<CourseBooking> findScheduleBookings(Long scheduleId) {
@@ -108,16 +117,32 @@ public class BookingService {
         return privateTrainingRepository.save(training);
     }
     
-    public List<PrivateTraining> findUserPrivateTrainings(Long userId) {
+    public List<PrivateTrainingDTO> findUserPrivateTrainings(Long userId) {
         List<PrivateTraining> trainings = privateTrainingRepository.findByUserId(userId);
-        for (PrivateTraining training : trainings) {
+        
+        return trainings.stream().map(training -> {
+            PrivateTrainingDTO dto = PrivateTrainingDTO.builder()
+                    .id(training.getId())
+                    .coachId(training.getCoachId())
+                    .userId(training.getUserId())
+                    .type(training.getType())
+                    .duration(training.getDuration())
+                    .price(training.getPrice())
+                    .totalSessions(training.getTotalSessions())
+                    .remainingSessions(training.getRemainingSessions())
+                    .status(training.getStatus() != null ? training.getStatus().name() : null)
+                    .expireDate(training.getExpireDate() != null ? training.getExpireDate().toString() : null)
+                    .createdAt(training.getCreatedAt() != null ? training.getCreatedAt().toString() : null)
+                    .build();
+            
             if (training.getCoachId() != null) {
                 coachRepository.findById(training.getCoachId()).ifPresent(coach -> {
-                    training.setCoachName(coach.getName());
+                    dto.setCoachName(coach.getName());
                 });
             }
-        }
-        return trainings;
+            
+            return dto;
+        }).collect(Collectors.toList());
     }
     
     public List<PrivateTraining> findCoachPrivateTrainings(Long coachId) {
@@ -134,7 +159,7 @@ public class BookingService {
         }
         
         PrivateTrainingBooking booking = PrivateTrainingBooking.builder()
-                .privateTraining(training)
+                .privateTrainingId(trainingId)
                 .bookedTime(bookedTime)
                 .location(location)
                 .note(note)
@@ -143,7 +168,6 @@ public class BookingService {
         
         booking = privateBookingRepository.save(booking);
         
-        // 减少剩余次数
         training.setRemainingSessions(training.getRemainingSessions() - 1);
         privateTrainingRepository.save(training);
         
@@ -159,10 +183,13 @@ public class BookingService {
         booking.setCancelledAt(LocalDateTime.now());
         privateBookingRepository.save(booking);
         
-        // 恢复次数
-        PrivateTraining training = booking.getPrivateTraining();
-        training.setRemainingSessions(training.getRemainingSessions() + 1);
-        privateTrainingRepository.save(training);
+        if (booking.getPrivateTrainingId() != null) {
+            PrivateTraining training = privateTrainingRepository.findById(booking.getPrivateTrainingId()).orElse(null);
+            if (training != null) {
+                training.setRemainingSessions(training.getRemainingSessions() + 1);
+                privateTrainingRepository.save(training);
+            }
+        }
     }
     
     public List<PrivateTrainingBooking> findUserPrivateBookings(Long userId) {
